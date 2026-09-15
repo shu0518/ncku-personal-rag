@@ -1,0 +1,19 @@
+# Python >= 3.10 required (developed with 3.14.3)
+# --- PDF / Document Parsing ---
+pypdf==4.3.1
+
+# --- Chunking ---
+langchain-text-splitters==0.3.8
+
+# --- Embedding (local, free, no API key needed) ---
+sentence-transformers==3.3.1
+
+# --- Vector DB ---
+psycopg2-binary==2.9.11
+pgvector==0.3.6
+
+# --- Environment & CLI ---
+python-dotenv==1.0.1
+
+# --- LLM (unified interface) ---
+litellm==1.83.4

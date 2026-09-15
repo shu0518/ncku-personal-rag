@@ -1,0 +1,19 @@
+# 原始/處理後資料（含第三方版權內容與 email，不進 repo）
+data/raw/
+data/processed/
+
+# 忽略 pgvector 的資料庫檔案
+docker/pgdata/
+
+# 若你之後改用 ChromaDB，也要忽略它的資料目錄
+chroma_db/
+
+# 忽略環境變數設定
+.env
+
+#虛擬環境目錄
+.venv/
+
+#Python 執行快取
+__pycache__/
+*.pyc
