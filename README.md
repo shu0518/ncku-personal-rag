@@ -19,18 +19,13 @@ I built a two-stage ETL pipeline that extracts text from 25 PDF/TXT sources (bro
 | Top-K = 5, similarity threshold = 0.3 | 5 chunks of 300 chars stays within the LLM's context window while giving source diversity; chunks below 0.3 cosine similarity are dropped as noise before they reach the prompt |
 | Two-stage idempotency: SHA-256 hash per source file (extract stage), `TRUNCATE` + full rebuild on `--rebuild` (embed stage) | Decouples "did this file already get cleaned" from "does the index need to be rebuilt," so re-running extraction is cheap and rebuilding the index is explicit |
 
-## Challenges
-
-**Problem.** Chunk size was a direct trade-off: large chunks (~1000 chars) diluted the embedding and lowered retrieval hit rate on specific questions; small chunks (~100 chars) didn't carry enough surrounding context for the LLM to answer correctly.
-**Approach.** Set `chunk_size=300, chunk_overlap=50` in `RecursiveCharacterTextSplitter`, sized to hold about one to two full sentences, with the overlap so a sentence isn't cut across a chunk boundary.
-**Result.** Retrieval returns relevant chunks for topic-specific questions in manual testing against the silicon-photonics corpus. There is no quantitative retrieval benchmark (precision/recall) yet — TODO.
-
 ## Limitations
 
-- No multi-hop reasoning: a question that requires combining facts from several different reports (e.g., a trend over time across sources) can miss information, since retrieval is single-pass over chunks.
-- Table and chart content in PDFs is not reliably extracted — `pypdf` preserves plain text well but loses complex table structure.
-- The embedding model is general-purpose multilingual, not domain-tuned, so precision on highly specific terms (e.g. `coherent DSP`) is limited.
-- `data/raw/` and `data/processed/` are excluded via `.gitignore` and not included in this repo — the source PDFs are third-party copyrighted analyst reports and news articles, and several contain real contact emails. To reproduce, supply your own documents in `data/raw/` before running `data_update.py`.
+- No OCR fallback: `PdfExtractor` calls `pypdf`'s `page.extract_text()` directly on every page. A scanned or image-only PDF page returns an empty string with no error or warning, so that page's content is silently dropped instead of ingested.
+- No table or chart structure extraction — `pypdf` returns plain text per page, so a report's tables collapse into unstructured lines rather than rows/columns.
+- No multi-hop reasoning: `rag_query.py` does one retrieve-then-generate pass per question. A question that requires combining facts from several different reports (e.g., a trend across sources over time) is not handled by a second retrieval round.
+- `stage1_extract_and_clean` and `stage2_embed_and_store` process source files strictly one at a time — no threading, multiprocessing, or async in the codebase — so ingestion time scales linearly with corpus size with no parallelism to fall back on.
+- `data/raw/` and `data/processed/` are excluded via `.gitignore` and not included in this repo, so the pipeline cannot be reproduced end-to-end without first supplying your own documents in `data/raw/`.
 
 ## Running It
 
