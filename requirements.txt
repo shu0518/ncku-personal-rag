@@ -12,6 +12,9 @@ sentence-transformers==3.3.1
 psycopg2-binary==2.9.11
 pgvector==0.3.6
 
+# --- Numeric (used directly in data_update.py / rag_query.py, not just transitive) ---
+numpy>=1.26
+
 # --- Environment & CLI ---
 python-dotenv==1.0.1
 
