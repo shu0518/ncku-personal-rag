@@ -3,7 +3,7 @@
 > Retrieval-augmented question answering over a personal corpus of 25 analyst reports and standards documents on the silicon-photonics and optical-networking industry, served through a local embedding model and a pgvector index.
 
 `Course project` · Netdb Lab, NCKU · AIASE 2026 · Individual
-**Stack:** Python · pgvector (PostgreSQL) · sentence-transformers · LangChain · LiteLLM
+**Stack:** Python >= 3.10 (developed on 3.14.3) · pgvector (PostgreSQL) · sentence-transformers · LangChain · LiteLLM
 
 ## Overview
 
@@ -57,3 +57,6 @@ python skill_builder.py --output skill.md
     rag_query.py         Embed query -> retrieve top-k chunks -> generate answer via LiteLLM
     skill_builder.py     Runs 10 fixed questions against the corpus, writes skill.md
     data/raw, data/processed   Source documents (gitignored, not included — see Limitations)
+
+---
+Original course-assignment README (in Chinese, incl. full data-source citation table): [docs/course-requirements.md](docs/course-requirements.md)
